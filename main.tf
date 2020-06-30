@@ -31,7 +31,10 @@ resource vault_azure_secret_backend_role "this" {
   }
 }
 
-
-data vault_generic_secret "this" {
-  path = vault_azure_secret_backend_role.this.id
+data vault_azure_access_credentials "this" {
+  role = vault_azure_secret_backend_role.this.name
+  validate_creds = true
+  num_sequential_successes = 8
+  num_seconds_between_tests = 7
 }
+
