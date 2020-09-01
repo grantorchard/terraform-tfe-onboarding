@@ -2,6 +2,47 @@ provider azurerm {
   features {}
 }
 
+locals {
+  group_files = fileset(path.module, "../files/*")
+  inputs = [ for v in local.group_files : file(v) ]
+}
+
+module "workspace_onboarding" {
+  source = "../"
+  for_each = toset(local.inputs)
+
+  app_id = jsondecode(each.value)["app_id"]
+
+  // Permissions
+  workspace_admins = jsondecode(each.value)["permissions"]["admin"]["members"]
+  workspace_plan = jsondecode(each.value)["permissions"]["plan"]["members"]
+  workspace_read_only = jsondecode(each.value)["permissions"]["read_only"]["members"]
+
+  tfe_org_name = "grantorchard"
+
+  create_azure_account = false
+}
+
+/*
+Create a Terraform workspace - Linked to the above Bitbucket Repo
+Create a Terraform team (for the required permission)
+Assign the Terraform team to the Terraform workspace
+Create an AAD Application Role with value matching the Terraform team name
+Create an AAD group with required members
+Assign the AAD group the AAD Application Role
+
+
+module "workspace_onboarding" {
+  source = "blah"
+
+  workspace_name = var.workspace_name
+  
+  repository_name = "${var.app_id}-${var.app_scope}-${var.environment}-${var.purpose}"
+
+
+  app_id respository_name respository_branch scope environment purpose
+}
+
 module "onboarding-app123abc" {
   source = "../"
 
@@ -21,3 +62,5 @@ module "onboarding-app123abc" {
 
   tfe_org_name = "grantorchard"
 }
+
+*/

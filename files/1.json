@@ -1,0 +1,47 @@
+{
+  "workspace": {
+    "app_id": "m1234512",
+    "application_scope": "tfeedev",
+    "environment": "edev",
+    "purpose": "sandbox",
+    "branch": "main",
+    "tfe_org": "sandbox",
+    "repo_name": "m1234512-tfeedev-edev-sandbox",
+    "workspace": "m1234512-tfeedev-edev-sandbox_main",
+    "permissions": {
+      "plan": {
+        "role": "m1234512-tfeedev-edev-sandbox_main_plan",
+        "group": "azure-m1234512-tfeedev-edev-sandbox_main_plan",
+        "description": "m1234512 tfe edev sandbox main plan",
+        "members": [
+          "go_hashicorp.com#EXT#"
+        ],
+        "owners": [
+          "go_hashicorp.com#EXT#"
+        ]
+      },
+      "admin": {
+        "role": "m1234512-tfeedev-edev-sandbox_main_admin",
+        "group": "azure-m1234512-tfeedev-edev-sandbox_main_admin",
+        "description": "m1234512 tfe edev sandbox main admin",
+        "members": [
+          "go_hashicorp.com#EXT#"
+        ],
+        "owners": [
+          "go_hashicorp.com#EXT#"
+        ]
+      },
+      "read_only": {
+        "role": "m1234512-tfeedev-edev-sandbox_main_admin",
+        "group": "azure-m1234512-tfeedev-edev-sandbox_main_admin",
+        "description": "m1234512 tfe edev sandbox main admin",
+        "members": [
+          "go_hashicorp.com#EXT#"
+        ],
+        "owners": [
+          "go_hashicorp.com#EXT#"
+        ]
+      }
+    }
+  }
+}
