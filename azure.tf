@@ -1,5 +1,5 @@
 // If create_azure_account is true...
-
+/*
 // Get the current Azure client context to feed into downstream resources.
 data azurerm_client_config "this" {
   for_each = var.create_azure_account == true ? toset([var.app_id]) : toset([])
@@ -36,3 +36,4 @@ data vault_azure_access_credentials "this" {
 }
 
 // Here ends the Azure related bits.
+*/

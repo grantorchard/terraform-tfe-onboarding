@@ -78,14 +78,27 @@ variable vault_azure_role {
 }
 
 // Terraform group members (created in Azure AD)
+variable permissions {
+  description = "A list of roles from which groups and members will be created"
+  type = map
+}
+
 variable workspace_admins {
   description = "UPN of the users who will be added to the workspace administration group."
   type    = list
+  default = []
 }
 
 variable workspace_read_only {
   description = "UPN of the users who will be added to the workspace readonly group. These users can still trigger Terraform plan and apply through the standard workflow, but not from the UI."
   type    = list
+  default = []
+}
+
+variable workspace_plan {
+  description = "UPN of the users who will be added to the workspace readonly group. These users can still trigger Terraform plan and apply through the standard workflow, but not from the UI."
+  type    = list
+  default = []
 }
 
 // Azure Variables

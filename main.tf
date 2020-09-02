@@ -1,20 +1,25 @@
 //Create the AD groups for admin and readonly users.
-data azuread_users "workspace_admins" {
-  mail_nicknames = var.workspace_admins
+data azuread_users "users" {
+  for_each = var.permissions
+  mail_nicknames = each.value.members
 }
 
-resource azuread_group "workspace_admins" {
-  name = "${var.app_id}-workspace_admins"
-  members = data.azuread_users.workspace_admins.object_ids
+resource azuread_group "users" {
+  for_each = var.permissions
+  name = each.key
+  description = each.value.description
+  members = data.azuread_users.users[each.key].object_ids
 }
 
-data azuread_users "workspace_read_only" {
-  mail_nicknames = var.workspace_read_only
+data azuread_users "owners" {
+  for_each = var.permissions
+  mail_nicknames = each.value.members
 }
 
-resource azuread_group "workspace_read_only" {
-  name = "${var.app_id}-workspace_admins"
-  members = data.azuread_users.workspace_read_only.object_ids
+resource azuread_group "owners" {
+  for_each = var.permissions
+  name = each.key
+  members = data.azuread_users.owners[each.key].object_ids
 }
 
 // Create the TFE workspace
@@ -24,23 +29,30 @@ resource tfe_workspace "this" {
 }
 
 // Create the TFE teams from AD object ids. We need this because we can't assign the group names to approles on the Azure AD App.
-resource tfe_team "admin" {
-  name         = azuread_group.workspace_admins.object_id
-  organization = var.tfe_org_name
-}
-
-resource tfe_team "read_only" {
-  name         = azuread_group.workspace_read_only.object_id
+resource tfe_team "this" {
+  for_each = var.permissions
+  name         = azuread_group.users[each.key].object_id
   organization = var.tfe_org_name
 }
 
 // Create permissions structure for TFE teams
-resource tfe_team_access "admin" {
-  team_id      = tfe_team.admin.id
+resource tfe_team_access "this" {
+  for_each = var.permissions
+  team_id      = tfe_team.this[each.key].id
   workspace_id = tfe_workspace.this.id
-  access       = "admin"
+  access       = each.key == "outputs_only" ? null : each.key
+  dynamic permissions {
+    for_each = each.key == "outputs_only" ? [0] : []
+    content {
+      runs = "read"
+      variables = "none"
+      state_versions = "read-outputs"
+      sentinel_mocks = "none"
+      workspace_locking = "false"
+    }
+  }
 }
-
+/*
 resource tfe_team_access "read_only" {
   team_id      = tfe_team.read_only.id
   workspace_id = tfe_workspace.this.id
@@ -92,3 +104,4 @@ resource tfe_variable "arm_tenant_id" {
   description  = "Azure service principal details"
   sensitive = true
 }
+*/
